@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/reaction_graph"
+    app:startDestination="@id/guildSelectionPage">
+
+    <fragment
+        android:id="@+id/guildSelectionPage"
+        android:name="com.kyledahlin.reactions.GuildSelectionPage"
+        android:label="GuildSelectionPage" >
+        <action
+            android:id="@+id/action_guildSelectionPage_to_memberSelectionPage"
+            app:destination="@id/memberSelectionPage" />
+    </fragment>
+    <fragment
+        android:id="@+id/memberSelectionPage"
+        android:name="com.kyledahlin.reactions.MemberSelectionPage"
+        android:label="MemberSelectionPage" >
+        <action
+            android:id="@+id/action_memberSelectionPage_to_emojiSelectionPage"
+            app:destination="@id/emojiSelectionPage" />
+    </fragment>
+    <fragment
+        android:id="@+id/emojiSelectionPage"
+        android:name="com.kyledahlin.reactions.EmojiSelectionPage"
+        android:label="EmojiSelectionPage" >
+        <argument
+            android:name="memberId"
+            app:argType="string" />
+        <argument
+            android:name="memberName"
+            app:argType="string" />
+    </fragment>
+</navigation>

@@ -13,23 +13,17 @@
 *See the License for the specific language governing permissions and
 *limitations under the License.
 */
-package com.kyledahlin.myrulebot.rules
+package com.kyledahlin.reactions
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import javax.inject.Inject
-import javax.inject.Singleton
+import kotlinx.serialization.Serializable
 
-@Singleton
-internal class RuleClassViewModel @Inject constructor(private val _repo: RuleRepo) : ViewModel() {
-
-    private val _rules = MutableLiveData<List<RuleEntry>>()
-
-    val ruleEntries: LiveData<List<RuleEntry>> = _rules
-
-    fun refreshRules() {
-        val entries = _repo.getRuleEntries()
-        _rules.postValue(entries)
-    }
-}
+/**
+ * A command that is specific to the reaction rule
+ */
+@Serializable
+internal data class Command(
+    val action: String,
+    val guildId: String,
+    val emoji: String? = null,
+    val member: String? = null
+)

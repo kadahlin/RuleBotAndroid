@@ -1,3 +1,18 @@
+/*
+*Copyright 2020 Kyle Dahlin
+*
+*Licensed under the Apache License, Version 2.0 (the "License");
+*you may not use this file except in compliance with the License.
+*You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+*Unless required by applicable law or agreed to in writing, software
+*distributed under the License is distributed on an "AS IS" BASIS,
+*WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*See the License for the specific language governing permissions and
+*limitations under the License.
+*/
 package com.kyledahlin.myrulebot
 
 import android.view.LayoutInflater
@@ -7,9 +22,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.kyledahlin.myrulebot.rules.RuleEntry
 
-typealias OnRuleClick = (String) -> Unit
+typealias OnStringClick = (String) -> Unit
 
-class EntryAdapter(private val onRuleClick: OnRuleClick) :
+class EntryAdapter(private val onRuleClick: OnStringClick) :
     RecyclerView.Adapter<EntryAdapter.ViewHolder>() {
 
     private val _entries = ArrayList<RuleEntry>()
@@ -36,7 +51,7 @@ class EntryAdapter(private val onRuleClick: OnRuleClick) :
 
         private val name = itemView.findViewById<TextView>(R.id.entry_view_holder_name)
 
-        fun bind(entry: RuleEntry, onRuleClick: OnRuleClick) {
+        fun bind(entry: RuleEntry, onRuleClick: OnStringClick) {
             name.text = entry.ruleName
             itemView.setOnClickListener {
                 onRuleClick(entry.activityName)

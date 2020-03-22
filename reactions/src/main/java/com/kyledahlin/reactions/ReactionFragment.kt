@@ -13,23 +13,21 @@
 *See the License for the specific language governing permissions and
 *limitations under the License.
 */
-package com.kyledahlin.myrulebot.rules
+package com.kyledahlin.reactions
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-internal class RuleClassViewModel @Inject constructor(private val _repo: RuleRepo) : ViewModel() {
+internal abstract class ReactionFragment : Fragment() {
+    @Inject
+    lateinit var _factory: ViewModelProvider.Factory
+    protected lateinit var _viewModel: ReactionViewModel
 
-    private val _rules = MutableLiveData<List<RuleEntry>>()
-
-    val ruleEntries: LiveData<List<RuleEntry>> = _rules
-
-    fun refreshRules() {
-        val entries = _repo.getRuleEntries()
-        _rules.postValue(entries)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        (requireActivity() as ReactionActivity).getComponent().inject(this)
+        _viewModel = ViewModelProvider(requireActivity(), _factory)[ReactionViewModel::class.java]
     }
 }

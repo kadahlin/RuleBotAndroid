@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlinx-serialization'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion 29
@@ -18,11 +20,25 @@ android {
     }
 
     buildTypes {
+        def url = System.getenv('RULEBOT_URL')
         release {
-            minifyEnabled false
+            buildConfigField("String", "RULEBOT_URL", "$url")
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            buildConfigField("String", "RULEBOT_URL", "\"$url\"")
+            minifyEnabled false
+            shrinkResources false
+        }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions { jvmTarget = "1.8" }
 
     dynamicFeatures = [":reactions"]
 }
@@ -43,6 +59,16 @@ dependencies {
 
     api 'com.google.dagger:dagger:2.27'
     kapt 'com.google.dagger:dagger-compiler:2.27'
+
+    api 'com.squareup.retrofit2:retrofit:2.7.2'
+    api("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.5.0")
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
+
+    def nav_version = "2.3.0-alpha04"
+    api "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    api "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    api 'com.jakewharton.timber:timber:4.7.1'
 
     testImplementation 'junit:junit:4.12'
 
