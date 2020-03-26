@@ -25,10 +25,7 @@
         android:name="com.kyledahlin.reactions.EmojiSelectionPage"
         android:label="EmojiSelectionPage" >
         <argument
-            android:name="memberId"
-            app:argType="string" />
-        <argument
-            android:name="memberName"
-            app:argType="string" />
+            android:name="memberNameId"
+            app:argType="com.kyledahlin.myrulebot.backend.NameAndId" />
     </fragment>
 </navigation>

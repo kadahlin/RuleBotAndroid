@@ -15,6 +15,8 @@
 */
 package com.kyledahlin.myrulebot.backend
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -31,10 +33,11 @@ internal interface RuleBotService {
 }
 
 @Serializable
+@Parcelize
 data class NameAndId(
     val name: String,
     val id: String
-) {
+): Parcelable {
     override fun equals(other: Any?): Boolean {
         return if (other is NameAndId) {
             id == other.id

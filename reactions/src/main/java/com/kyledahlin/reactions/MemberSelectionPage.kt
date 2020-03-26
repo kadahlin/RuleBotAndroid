@@ -22,37 +22,43 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.member_selection_page.*
+import com.kyledahlin.myrulebot.backend.NameAndId
+import com.kyledahlin.myrulebot.ui.OnNameIdSelection
+import com.kyledahlin.reactions.databinding.MemberSelectionPageBinding
 
 /**
  * Show the members for a particular guild
  */
-internal class MemberSelectionPage : ReactionFragment() {
+internal class MemberSelectionPage : ReactionFragment(), OnNameIdSelection {
+
+    private lateinit var _binding: MemberSelectionPageBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.member_selection_page, container, false)
+        _binding = MemberSelectionPageBinding.inflate(inflater, container, false).apply {
+            viewmodel = _viewModel
+            lifecycleOwner = viewLifecycleOwner
+            onMemberClick = this@MemberSelectionPage
+        }
+        return _binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        reaction_member_recycler.setOnClick {
-            findNavController().navigate(
-                MemberSelectionPageDirections.actionMemberSelectionPageToEmojiSelectionPage(
-                    it.id,
-                    it.name
-                )
-            )
-        }
         _viewModel.state.observe(viewLifecycleOwner, Observer(::displayState))
+    }
+
+    override fun onSelected(nameAndId: NameAndId) {
+        findNavController().navigate(
+            MemberSelectionPageDirections.actionMemberSelectionPageToEmojiSelectionPage(nameAndId)
+        )
     }
 
     private fun displayState(state: ReactionState) {
         if (state is ReactionState.Loaded) {
             (requireActivity() as AppCompatActivity).supportActionBar?.title = state.guildName
-            reaction_member_recycler.setData(state.members)
         }
     }
 }

@@ -20,12 +20,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.guild_selection_page.*
+import com.kyledahlin.myrulebot.backend.NameAndId
+import com.kyledahlin.myrulebot.ui.OnNameIdSelection
+import com.kyledahlin.reactions.databinding.GuildSelectionPageBinding
 import timber.log.Timber
 
-internal class GuildSelectionPage : ReactionFragment() {
+internal class GuildSelectionPage : ReactionFragment(), OnNameIdSelection {
+
+    private lateinit var _binding: GuildSelectionPageBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,18 +40,21 @@ internal class GuildSelectionPage : ReactionFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.guild_selection_page, container, false)
+        _binding = GuildSelectionPageBinding.inflate(inflater, container, false).apply {
+            lifecycleOwner = viewLifecycleOwner
+            viewmodel = _viewModel
+            onGuildClick = this@GuildSelectionPage
+        }
+        return _binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Guilds"
-        reaction_guild_recycler.setOnClick { item ->
-            Timber.d("loading $item")
-            _viewModel.loadState(item.name, item.id, useCache = true)
-            findNavController().navigate(GuildSelectionPageDirections.actionGuildSelectionPageToMemberSelectionPage())
-        }
-        _viewModel.guilds.observe(viewLifecycleOwner, Observer { items ->
-            reaction_guild_recycler.setData(items)
-        })
+    }
+
+    override fun onSelected(nameAndId: NameAndId) {
+        Timber.d("loading guild $nameAndId")
+        _viewModel.loadState(nameAndId.name, nameAndId.id, useCache = true)
+        findNavController().navigate(GuildSelectionPageDirections.actionGuildSelectionPageToMemberSelectionPage())
     }
 }

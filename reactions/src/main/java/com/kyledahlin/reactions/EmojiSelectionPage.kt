@@ -24,28 +24,34 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.kyledahlin.reactions.databinding.EmojiSelectionPageBinding
 import kotlinx.android.synthetic.main.emoji_selection_page.*
 
 internal class EmojiSelectionPage : ReactionFragment() {
 
     private var _guildId: String? = null
     private val args: EmojiSelectionPageArgs by navArgs()
+    private lateinit var _binding: EmojiSelectionPageBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.emoji_selection_page, container, false)
+        _binding = EmojiSelectionPageBinding.inflate(inflater, container, false).apply {
+            viewmodel = _viewModel
+            lifecycleOwner = viewLifecycleOwner
+        }
+        return _binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        (requireActivity() as AppCompatActivity).supportActionBar?.title = args.memberName
-        emoji_selection_recycler.apply {
+        (requireActivity() as AppCompatActivity).supportActionBar?.title = args.memberNameId.name
+        _binding.emojiSelectionRecycler.apply {
             layoutManager = LinearLayoutManager(this.context)
             adapter = NameIdCheckAdapter()
         }
-        emoji_selection_button.setOnClickListener {
+        _binding.emojiSelectionButton.setOnClickListener {
             val guildId = _guildId
             if (guildId != null) {
                 val (added, unadded) = (emoji_selection_recycler.adapter as NameIdCheckAdapter).getAddedRemoved()
@@ -54,7 +60,7 @@ internal class EmojiSelectionPage : ReactionFragment() {
                         action = "add",
                         guildId = guildId,
                         emoji = it.id,
-                        member = args.memberId
+                        member = args.memberNameId.id
                     )
                 }
                 val removeCommands = unadded.map {
@@ -62,7 +68,7 @@ internal class EmojiSelectionPage : ReactionFragment() {
                         action = "remove",
                         guildId = guildId,
                         emoji = it.id,
-                        member = args.memberId
+                        member = args.memberNameId.id
                     )
                 }
                 _viewModel.postCommands(addCommands.union(removeCommands))
@@ -75,12 +81,6 @@ internal class EmojiSelectionPage : ReactionFragment() {
     private fun loadState(state: ReactionState) {
         if (state is ReactionState.Loaded) {
             _guildId = state.guildId
-            val emojis = state.emojis
-            val addedIds = state.added.map { it.emojiId }
-            val added = emojis.filter { addedIds.contains(it.id) }
-            val unadded = emojis.filter { !addedIds.contains(it.id) }
-
-            (emoji_selection_recycler.adapter as NameIdCheckAdapter).setData(unadded, added)
         }
     }
 }
