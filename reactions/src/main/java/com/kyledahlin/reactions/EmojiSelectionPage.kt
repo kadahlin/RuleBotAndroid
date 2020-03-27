@@ -39,6 +39,7 @@ internal class EmojiSelectionPage : ReactionFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = EmojiSelectionPageBinding.inflate(inflater, container, false).apply {
+            memberId = args.memberNameId.id
             viewmodel = _viewModel
             lifecycleOwner = viewLifecycleOwner
         }

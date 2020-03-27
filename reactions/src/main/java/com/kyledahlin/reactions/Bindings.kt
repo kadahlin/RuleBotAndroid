@@ -21,11 +21,11 @@ import com.kyledahlin.myrulebot.backend.NameAndId
 import com.kyledahlin.myrulebot.ui.NameAndIdRecycler
 import com.kyledahlin.myrulebot.ui.OnNameIdSelection
 
-@BindingAdapter("emojis")
-internal fun bindEmojis(recycler: RecyclerView, state: ReactionState?) {
-    if (state is ReactionState.Loaded) {
+@BindingAdapter("emojis", "memberId")
+internal fun bindEmojis(recycler: RecyclerView, state: ReactionState?, memberId: String?) {
+    if (state is ReactionState.Loaded && memberId != null) {
         val emojis = state.emojis
-        val addedIds = state.added.map { it.emojiId }
+        val addedIds = state.added.filter { it.memberId == memberId }.map { it.emojiId }
         val added = emojis.filter { addedIds.contains(it.id) }
         val unadded = emojis.filter { !addedIds.contains(it.id) }
 

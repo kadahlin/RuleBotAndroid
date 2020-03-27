@@ -6,6 +6,10 @@
         <variable
             name="viewmodel"
             type="com.kyledahlin.reactions.ReactionViewModel"/>
+
+        <variable
+            name="memberId"
+            type="String" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,6 +30,7 @@
             android:id="@+id/emoji_selection_recycler"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:memberId="@{memberId}"
             app:emojis="@{viewmodel.state}"
             app:layout_constraintBottom_toTopOf="@+id/emoji_selection_button"
             app:layout_constraintEnd_toEndOf="parent"
