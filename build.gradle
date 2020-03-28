@@ -1,16 +1,33 @@
 buildscript {
-    ext.kotlin_version = '1.3.71'
+
+    ext {
+        rulebot = [
+                compile: 29,
+                buildTools: "29.0.3",
+                minSdk: 24,
+                targetSdk: 29,
+                versionCode: 1,
+                versionName: "1.0",
+                testRunner: "androidx.test.runner.AndroidJUnitRunner"
+        ]
+        libs = [
+                kotlin: '1.3.71',
+                navigation: "2.3.0-alpha04",
+                lifecycle: "2.2.0",
+                dagger: "2.27"
+        ]
+    }
+
     repositories {
         google()
         jcenter()
-        
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-        def nav_version = "2.3.0-alpha04"
-        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$libs.kotlin"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$libs.kotlin"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$libs.navigation"
     }
 }
 
@@ -18,8 +35,11 @@ allprojects {
     repositories {
         google()
         jcenter()
-        
     }
+}
+
+def getScriptPath(filename) {
+    return projectDir.absolutePath + "/gradle/scripts/" + filename
 }
 
 task clean(type: Delete) {

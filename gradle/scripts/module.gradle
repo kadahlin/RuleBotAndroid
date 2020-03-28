@@ -1,0 +1,41 @@
+apply plugin: 'com.android.dynamic-feature'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlinx-serialization'
+apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs.kotlin"
+
+android {
+    compileSdkVersion rulebot.compile
+
+    defaultConfig {
+        minSdkVersion rulebot.minSdk
+        targetSdkVersion rulebot.targetSdk
+        versionCode rulebot.versionCode
+        versionName rulebot.versionName
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    dataBinding {
+        enabled true
+    }
+
+    kapt {
+        javacOptions {
+            // Increase the max count of errors from annotation processors.
+            // Default is 100.
+            option("-Xmaxerrs", 1000)
+        }
+    }
+
+    kotlinOptions { jvmTarget = "1.8" }
+}
+
+dependencies {
+    implementation project(':app')
+    kapt "com.google.dagger:dagger-compiler:$libs.dagger"
+}
