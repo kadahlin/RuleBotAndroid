@@ -21,9 +21,31 @@ import kotlinx.serialization.Serializable
  * A command that is specific to the reaction rule
  */
 @Serializable
-internal data class Command(
+internal data class Command private constructor(
     val action: String,
     val guildId: String,
     val emoji: String? = null,
     val member: String? = null
-)
+) {
+    companion object {
+        fun remove(guildId: Long, emoji: Long? = null, member: Long? = null): Command {
+            return Command(
+                action = "remove",
+                guildId = guildId.toString(),
+                emoji = emoji.toString(),
+                member = member.toString()
+            )
+        }
+
+        fun add(guildId: Long, emoji: Long? = null, member: Long? = null): Command {
+            return Command(
+                action = "add",
+                guildId = guildId.toString(),
+                emoji = emoji.toString(),
+                member = member.toString()
+            )
+        }
+
+        fun list(guildId: Long) = Command(action = "list", guildId = guildId.toString())
+    }
+}

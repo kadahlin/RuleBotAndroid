@@ -35,7 +35,7 @@ internal abstract class ReactionViewModel : ViewModel() {
 
     abstract fun loadGuilds(useCache: Boolean = true)
 
-    abstract fun loadState(guildName: String, guildId: String, useCache: Boolean = true)
+    abstract fun loadState(guildName: String, guildId: Long, useCache: Boolean = true)
 }
 
 internal class ReactionViewModelImpl constructor(
@@ -78,16 +78,12 @@ internal class ReactionViewModelImpl constructor(
         }
     }
 
-    override fun loadState(guildName: String, guildId: String, useCache: Boolean) {
-        Timber.d("loading state for $guildName")
+    override fun loadState(guildName: String, guildId: Long, useCache: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            Timber.d("starting the coroutine")
             _state.postValue(ReactionState.Loading)
             try {
-                val memberInfo = ruleBotApi.getMembers(guildId)
-                Timber.d("got ${memberInfo.size} members")
+                val memberInfo = ruleBotApi.getMembers(guildId, useCache)
                 val response = reactionService.list(guildId)
-                Timber.d("got ${response.emojis.size} emojis")
                 val state = ReactionState.Loaded(
                     guildName = guildName,
                     guildId = guildId,
@@ -95,18 +91,12 @@ internal class ReactionViewModelImpl constructor(
                     emojis = response.emojis,
                     added = response.addedEmojis
                 )
-                Timber.d("posting new state for $guildName")
                 _state.postValue(state)
             } catch (e: Exception) {
                 Timber.e(e, "get error while trying to load state for guild id: [$guildId]")
                 _state.postValue(ReactionState.Error("unknown error"))
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Timber.d("reaction view model was cleared")
     }
 }
 
@@ -115,7 +105,7 @@ internal sealed class ReactionState {
     data class Error(val message: String) : ReactionState()
     data class Loaded(
         val guildName: String,
-        val guildId: String,
+        val guildId: Long,
         val members: List<NameAndId>,
         val emojis: List<NameAndId>,
         val added: List<AddedEmoji>

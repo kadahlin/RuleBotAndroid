@@ -28,8 +28,9 @@ internal interface ReactionService {
     suspend fun postReactionCommand(@Body command: Command): JsonObject
 }
 
-internal suspend fun ReactionService.list(guildId: String): ListResponse {
-    val stringList = this.postReactionCommand(Command(guildId = guildId, action = "list"))
+internal suspend fun ReactionService.list(guildId: Long): ListResponse {
+    val stringList =
+        this.postReactionCommand(Command.list(guildId))
     return Json(JsonConfiguration.Stable.copy(isLenient = true)).parse(
         ListResponse.serializer(),
         stringList.toString()

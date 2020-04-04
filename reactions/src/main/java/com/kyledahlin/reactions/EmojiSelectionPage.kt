@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.emoji_selection_page.*
 
 internal class EmojiSelectionPage : ReactionFragment() {
 
-    private var _guildId: String? = null
+    private var _guildId: Long? = null
     private val args: EmojiSelectionPageArgs by navArgs()
     private lateinit var _binding: EmojiSelectionPageBinding
 
@@ -40,8 +40,6 @@ internal class EmojiSelectionPage : ReactionFragment() {
     ): View? {
         _binding = EmojiSelectionPageBinding.inflate(inflater, container, false).apply {
             memberId = args.memberNameId.id
-            viewmodel = _viewModel
-            lifecycleOwner = viewLifecycleOwner
         }
         return _binding.root
     }
@@ -57,20 +55,10 @@ internal class EmojiSelectionPage : ReactionFragment() {
             if (guildId != null) {
                 val (added, unadded) = (emoji_selection_recycler.adapter as NameIdCheckAdapter).getAddedRemoved()
                 val addCommands = added.map {
-                    Command(
-                        action = "add",
-                        guildId = guildId,
-                        emoji = it.id,
-                        member = args.memberNameId.id
-                    )
+                    Command.add(guildId, it.id, args.memberNameId.id)
                 }
                 val removeCommands = unadded.map {
-                    Command(
-                        action = "remove",
-                        guildId = guildId,
-                        emoji = it.id,
-                        member = args.memberNameId.id
-                    )
+                    Command.remove(guildId, it.id, args.memberNameId.id)
                 }
                 _viewModel.postCommands(addCommands.union(removeCommands))
                 findNavController().navigateUp()
@@ -82,6 +70,7 @@ internal class EmojiSelectionPage : ReactionFragment() {
     private fun loadState(state: ReactionState) {
         if (state is ReactionState.Loaded) {
             _guildId = state.guildId
+            _binding.state = state
         }
     }
 }

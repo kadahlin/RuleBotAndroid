@@ -22,6 +22,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.kyledahlin.myrulebot.backend.RuleBotApi
 import com.kyledahlin.myrulebot.backend.RuleBotApiImpl
 import com.kyledahlin.myrulebot.backend.RuleBotService
+import com.kyledahlin.myrulebot.persistence.*
 import com.kyledahlin.myrulebot.rules.RuleClassViewModel
 import com.kyledahlin.myrulebot.rules.RuleRepo
 import com.kyledahlin.myrulebot.rules.RuleRepoImpl
@@ -38,7 +39,6 @@ import javax.inject.Provider
 import javax.inject.Singleton
 import kotlin.reflect.KClass
 
-
 @Module
 internal abstract class InterfaceModule {
     @Binds
@@ -48,6 +48,14 @@ internal abstract class InterfaceModule {
     @Binds
     @Singleton
     abstract fun bindsRuleBotApi(ruleBotApiImpl: RuleBotApiImpl): RuleBotApi
+
+    @Binds
+    @Singleton
+    abstract fun bindsTimeApi(timeApiImpl: TimeApiImpl): TimeApi
+
+    @Binds
+    @Singleton
+    abstract fun bindsPreferences(preferencesImpl: PreferencesImpl): Preferences
 }
 
 @Module
@@ -98,11 +106,12 @@ internal class ViewModelModule {
 }
 
 @Singleton
-@Component(modules = [ViewModelModule::class, InterfaceModule::class, NetworkModule::class])
+@Component(modules = [ViewModelModule::class, InterfaceModule::class, NetworkModule::class, PersistenceModule::class])
 interface CoreComponent {
     fun inject(activity: RuleSelectionActivity)
     fun providesRetrofit(): Retrofit
     fun providesRuleBotService(): RuleBotApi
+    fun providesPreferences(): Preferences
 
     @Component.Builder
     interface Builder {

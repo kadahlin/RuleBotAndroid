@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_memberSelectionPage_to_emojiSelectionPage"
             app:destination="@id/emojiSelectionPage" />
+        <argument
+            android:name="nameAndId"
+            app:argType="com.kyledahlin.myrulebot.backend.NameAndId" />
     </fragment>
     <fragment
         android:id="@+id/emojiSelectionPage"

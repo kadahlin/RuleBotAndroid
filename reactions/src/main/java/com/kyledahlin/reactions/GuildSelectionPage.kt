@@ -20,13 +20,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kyledahlin.myrulebot.backend.NameAndId
 import com.kyledahlin.myrulebot.ui.OnNameIdSelection
 import com.kyledahlin.reactions.databinding.GuildSelectionPageBinding
 import timber.log.Timber
 
-internal class GuildSelectionPage : ReactionFragment(), OnNameIdSelection {
+internal class GuildSelectionPage : ReactionFragment(), OnNameIdSelection,
+    SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var _binding: GuildSelectionPageBinding
 
@@ -41,20 +44,27 @@ internal class GuildSelectionPage : ReactionFragment(), OnNameIdSelection {
         savedInstanceState: Bundle?
     ): View? {
         _binding = GuildSelectionPageBinding.inflate(inflater, container, false).apply {
-            lifecycleOwner = viewLifecycleOwner
-            viewmodel = _viewModel
             onGuildClick = this@GuildSelectionPage
+            onRefresh = this@GuildSelectionPage
         }
         return _binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as AppCompatActivity).supportActionBar?.title = "Guilds"
+        _viewModel.guilds.observe(viewLifecycleOwner, Observer {
+            _binding.guilds = it
+            _binding.isRefreshing = false
+        })
     }
 
     override fun onSelected(nameAndId: NameAndId) {
         Timber.d("loading guild $nameAndId")
         _viewModel.loadState(nameAndId.name, nameAndId.id, useCache = true)
-        findNavController().navigate(GuildSelectionPageDirections.actionGuildSelectionPageToMemberSelectionPage())
+        findNavController().navigate(GuildSelectionPageDirections.actionGuildSelectionPageToMemberSelectionPage(nameAndId))
+    }
+
+    override fun onRefresh() {
+        _viewModel.loadGuilds(useCache = false)
     }
 }

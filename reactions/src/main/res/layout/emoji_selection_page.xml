@@ -4,12 +4,12 @@
 
     <data>
         <variable
-            name="viewmodel"
-            type="com.kyledahlin.reactions.ReactionViewModel"/>
+            name="state"
+            type="com.kyledahlin.reactions.ReactionState"/>
 
         <variable
             name="memberId"
-            type="String" />
+            type="Long" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:memberId="@{memberId}"
-            app:emojis="@{viewmodel.state}"
+            app:emojis="@{state}"
             app:layout_constraintBottom_toTopOf="@+id/emoji_selection_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

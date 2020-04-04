@@ -36,8 +36,8 @@ internal interface RuleBotService {
 @Parcelize
 data class NameAndId(
     val name: String,
-    val id: String
-): Parcelable {
+    val id: Long
+) : Parcelable {
     override fun equals(other: Any?): Boolean {
         return if (other is NameAndId) {
             id == other.id

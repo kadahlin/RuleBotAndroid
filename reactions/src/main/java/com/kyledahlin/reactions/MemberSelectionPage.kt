@@ -22,6 +22,8 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kyledahlin.myrulebot.backend.NameAndId
 import com.kyledahlin.myrulebot.ui.OnNameIdSelection
 import com.kyledahlin.reactions.databinding.MemberSelectionPageBinding
@@ -29,9 +31,11 @@ import com.kyledahlin.reactions.databinding.MemberSelectionPageBinding
 /**
  * Show the members for a particular guild
  */
-internal class MemberSelectionPage : ReactionFragment(), OnNameIdSelection {
+internal class MemberSelectionPage : ReactionFragment(), OnNameIdSelection, SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var _binding: MemberSelectionPageBinding
+    private val args: MemberSelectionPageArgs by navArgs()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,9 +43,8 @@ internal class MemberSelectionPage : ReactionFragment(), OnNameIdSelection {
         savedInstanceState: Bundle?
     ): View? {
         _binding = MemberSelectionPageBinding.inflate(inflater, container, false).apply {
-            viewmodel = _viewModel
-            lifecycleOwner = viewLifecycleOwner
             onMemberClick = this@MemberSelectionPage
+            onRefresh = this@MemberSelectionPage
         }
         return _binding.root
     }
@@ -59,6 +62,14 @@ internal class MemberSelectionPage : ReactionFragment(), OnNameIdSelection {
     private fun displayState(state: ReactionState) {
         if (state is ReactionState.Loaded) {
             (requireActivity() as AppCompatActivity).supportActionBar?.title = state.guildName
+            _binding.apply {
+                this.state = state
+                isRefreshing = false
+            }
         }
+    }
+
+    override fun onRefresh() {
+        _viewModel.loadState(args.nameAndId.name, args.nameAndId.id, useCache = false)
     }
 }

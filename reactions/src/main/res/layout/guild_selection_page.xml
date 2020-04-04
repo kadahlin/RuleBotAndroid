@@ -3,29 +3,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
+        <import type="com.kyledahlin.myrulebot.backend.NameAndId" />
+
+        <import type="java.util.List" />
+
         <variable
-            name="viewmodel"
-            type="com.kyledahlin.reactions.ReactionViewModel" />
+            name="isRefreshing"
+            type="boolean" />
+
+        <variable
+            name="guilds"
+            type="List&lt;NameAndId>" />
 
         <variable
             name="onGuildClick"
             type="com.kyledahlin.myrulebot.ui.OnNameIdSelection" />
+
+        <variable
+            name="onRefresh"
+            type="androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.kyledahlin.myrulebot.ui.NameAndIdRecycler
-            android:id="@+id/reaction_guild_recycler"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            onRefresh="@{onRefresh}"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:guilds="@{viewmodel.guilds}"
-            app:onSelection="@{onGuildClick}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:refreshing="@{isRefreshing}">
+
+            <com.kyledahlin.myrulebot.ui.NameAndIdRecycler
+                android:id="@+id/reaction_guild_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:guilds="@{guilds}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:onSelection="@{onGuildClick}" />
+
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

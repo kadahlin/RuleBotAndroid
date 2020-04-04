@@ -17,17 +17,18 @@ package com.kyledahlin.reactions
 
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.kyledahlin.myrulebot.backend.NameAndId
 import com.kyledahlin.myrulebot.ui.NameAndIdRecycler
 import com.kyledahlin.myrulebot.ui.OnNameIdSelection
 
 @BindingAdapter("emojis", "memberId")
-internal fun bindEmojis(recycler: RecyclerView, state: ReactionState?, memberId: String?) {
+internal fun bindEmojis(recycler: RecyclerView, state: ReactionState?, memberId: Long?) {
     if (state is ReactionState.Loaded && memberId != null) {
         val emojis = state.emojis
-        val addedIds = state.added.filter { it.memberId == memberId }.map { it.emojiId }
-        val added = emojis.filter { addedIds.contains(it.id) }
-        val unadded = emojis.filter { !addedIds.contains(it.id) }
+        val addedIds = state.added.filter { it.memberId.toLong() == memberId }.map { it.emojiId }
+        val added = emojis.filter { addedIds.contains(it.id.toString()) }
+        val unadded = emojis.filter { !addedIds.contains(it.id.toString()) }
 
         (recycler.adapter as NameIdCheckAdapter).setData(unadded, added)
     }
@@ -51,4 +52,12 @@ internal fun bindNameIdSelection(
     onNameIdSelection: OnNameIdSelection
 ) {
     recycler.setOnClick(onNameIdSelection)
+}
+
+@BindingAdapter("onRefresh")
+internal fun bindOnRefresh(
+    swipeRefreshLayout: SwipeRefreshLayout,
+    onRefreshListener: SwipeRefreshLayout.OnRefreshListener
+) {
+    swipeRefreshLayout.setOnRefreshListener(onRefreshListener)
 }

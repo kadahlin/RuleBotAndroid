@@ -5,28 +5,44 @@
     <data>
 
         <variable
-            name="viewmodel"
-            type="com.kyledahlin.reactions.ReactionViewModel" />
+            name="isRefreshing"
+            type="boolean" />
+
+        <variable
+            name="state"
+            type="com.kyledahlin.reactions.ReactionState" />
 
         <variable
             name="onMemberClick"
             type="com.kyledahlin.myrulebot.ui.OnNameIdSelection" />
+
+        <variable
+            name="onRefresh"
+            type="androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.kyledahlin.myrulebot.ui.NameAndIdRecycler
-            android:id="@+id/reaction_member_recycler"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:members="@{viewmodel.state}"
-            app:onSelection="@{onMemberClick}" />
+            app:onRefresh="@{onRefresh}"
+            app:refreshing="@{isRefreshing}">
+
+            <com.kyledahlin.myrulebot.ui.NameAndIdRecycler
+                android:id="@+id/reaction_member_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:members="@{state}"
+                app:onSelection="@{onMemberClick}" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
