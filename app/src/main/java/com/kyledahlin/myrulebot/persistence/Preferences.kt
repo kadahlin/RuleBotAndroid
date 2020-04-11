@@ -26,10 +26,12 @@ interface Preferences {
 
     //Data has been saved to the cache and this timestamp should be saved
     fun apiCachePopulated()
+
+    val cacheTimeout: Long
 }
 
 private const val API_CACHE_KEY = "api_cache_timestamp"
-private const val ONE_DAY_MILLISECONDS = 1000 * 60 * 60 * 24
+private const val ONE_DAY_MILLISECONDS = 1000 * 60 * 60 * 24L
 
 @Singleton
 internal class PreferencesImpl @Inject constructor(
@@ -37,16 +39,19 @@ internal class PreferencesImpl @Inject constructor(
     private val _timeApi: TimeApi
 ) : Preferences {
 
+    override val cacheTimeout: Long
+        get() = ONE_DAY_MILLISECONDS
+
     override fun isApiCacheValid(): Boolean {
         val lastTime = _prefs.getLong(API_CACHE_KEY, -1L)
         return lastTime != -1L && !hasOneDayPassed(lastTime)
     }
 
     fun hasOneDayPassed(lastTime: Long): Boolean {
-        return (System.currentTimeMillis() - lastTime) >= ONE_DAY_MILLISECONDS
+        return (_timeApi.getCurrentTime() - lastTime) >= ONE_DAY_MILLISECONDS
     }
 
     override fun apiCachePopulated() {
-        _prefs.edit { putLong(API_CACHE_KEY, System.currentTimeMillis()) }
+        _prefs.edit { putLong(API_CACHE_KEY, _timeApi.getCurrentTime()) }
     }
 }
